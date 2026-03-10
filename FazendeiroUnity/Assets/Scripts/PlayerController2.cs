@@ -1,3 +1,4 @@
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -30,6 +31,7 @@ public class PlayerController2 : MonoBehaviour
     }
     void Update()
     {
+        Pause();
         float horizontalInput = moveAction.ReadValue<Vector2>().x;
         transform.Translate(Vector3.right * speed * Time.deltaTime * horizontalInput);
         if ( transform.position.x < -xRange)
@@ -44,13 +46,20 @@ public class PlayerController2 : MonoBehaviour
         {
             Instantiate(projectilePrefab, transform.position + new Vector3(0, 2f, 0), projectilePrefab.transform.rotation);
         }
+    }
+    void Pause()
+    {
         if (pauseActionPlayer.WasPressedThisFrame())
         {
-            
+            InputActions.FindActionMap("Player").Disable();
+            InputActions.FindActionMap("UI").Enable();
+            pauseWindow.SetActive(true);
         }
         if (pauseActionUI.WasPressedThisFrame())
         {
-            
+            InputActions.FindActionMap("UI").Disable();
+            InputActions.FindActionMap("Player").Enable();
+            pauseWindow.SetActive(false);
         }
     }
 }
