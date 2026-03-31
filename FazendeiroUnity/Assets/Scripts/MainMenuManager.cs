@@ -6,6 +6,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private string start;
     [SerializeField] private GameObject painelInicial;
     [SerializeField] private GameObject painelOpcoes;
+    [SerializeField] private GameObject painelSaida;
     public void Play()
     {
         SceneManager.LoadScene(start);
@@ -20,9 +21,18 @@ public class MainMenuManager : MonoBehaviour
         painelInicial.SetActive(true);
         painelOpcoes.SetActive(false);
     }
-    public void Quit()
+    public void TouchQuit()
     {
-        Debug.Log("Sair do Jogo");
+        painelInicial.SetActive(false);
+        painelSaida.SetActive(true);
+    }
+    public void ReturnQuit()
+    {
+        painelSaida.SetActive(false);
+        painelInicial.SetActive(true);
+    }
+    public void ConfirmQuit()
+    {
         Application.Quit();
     }
 }
