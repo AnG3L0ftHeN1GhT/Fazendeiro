@@ -2,6 +2,8 @@ using Microsoft.Unity.VisualStudio.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
+using Unity.VisualScripting;
 
 public class PlayerController2 : MonoBehaviour
 {
@@ -9,11 +11,14 @@ public class PlayerController2 : MonoBehaviour
     public float xRange = 15f;
     public GameObject projectilePrefab;
     public GameObject pauseWindow;
+    public GameObject body;
     public InputActionAsset InputActions;
     private InputAction moveAction;
     private InputAction fireAction;
+    private InputAction ghostAction;
     private InputAction pauseActionPlayer;
     private InputAction pauseActionUI;
+    private IEnumerator coroutine;
     private void OnEnable()
     {
         InputActions.FindActionMap("Player").Enable();
@@ -26,6 +31,7 @@ public class PlayerController2 : MonoBehaviour
     {
         moveAction = InputSystem.actions.FindAction("Move");
         fireAction = InputSystem.actions.FindAction("Jump");
+        ghostAction = InputSystem.actions.FindAction("Ghost");
         pauseActionPlayer = InputSystem.actions.FindAction("Pause/Player");
         pauseActionUI = InputSystem.actions.FindAction("Pause/UI");
     }
@@ -46,6 +52,12 @@ public class PlayerController2 : MonoBehaviour
         {
             Instantiate(projectilePrefab, transform.position + new Vector3(0, 2f, 0), projectilePrefab.transform.rotation);
         }
+        if (ghostAction.WasPressedThisFrame())
+        {
+            coroutine = Ghosting(2.0f);
+            StartCoroutine(coroutine);
+            body.SetActive(false);
+        }
     }
     void Pause()
     {
@@ -61,5 +73,10 @@ public class PlayerController2 : MonoBehaviour
             InputActions.FindActionMap("Player").Enable();
             pauseWindow.SetActive(false);
         }
+    }
+    private IEnumerator Ghosting(float ghostcooldown)
+    {
+        yield return new WaitForSeconds(ghostcooldown);
+        body.SetActive(true);
     }
 }
