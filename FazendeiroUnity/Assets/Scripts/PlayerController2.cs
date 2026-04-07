@@ -7,6 +7,9 @@ using Unity.VisualScripting;
 
 public class PlayerController2 : MonoBehaviour
 {
+    private int maxHealth = 3;
+    private int currentHealth = 3;
+    public HealthBar hpbar;
     public float speed = 20f;
     public float xRange = 15f;
     public GameObject projectilePrefab;
@@ -18,7 +21,7 @@ public class PlayerController2 : MonoBehaviour
     private InputAction ghostAction;
     private InputAction pauseActionPlayer;
     private InputAction pauseActionUI;
-    private IEnumerator coroutine;
+    private IEnumerator ghostcoroutine;
     private void OnEnable()
     {
         InputActions.FindActionMap("Player").Enable();
@@ -40,11 +43,11 @@ public class PlayerController2 : MonoBehaviour
         Pause();
         float horizontalInput = moveAction.ReadValue<Vector2>().x;
         transform.Translate(Vector3.right * speed * Time.deltaTime * horizontalInput);
-        if ( transform.position.x < -xRange)
+        if (transform.position.x < -xRange)
         {
             transform.position = new Vector3(-xRange, transform.position.y, transform.position.y);
         }
-        if ( transform.position.x > xRange)
+        if (transform.position.x > xRange)
         {
             transform.position = new Vector3(xRange, transform.position.y, transform.position.y);
         }
@@ -54,10 +57,27 @@ public class PlayerController2 : MonoBehaviour
         }
         if (ghostAction.WasPressedThisFrame())
         {
-            coroutine = Ghosting(2.0f);
-            StartCoroutine(coroutine);
+            ghostcoroutine = Ghosting(2.0f);
+            StartCoroutine(ghostcoroutine);
             body.SetActive(false);
         }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Animal"))
+        {
+            AlterHealth(-1);
+        }
+    }
+    void AlterHealth(int alter)
+    {
+        currentHealth += alter;
+        hpbar.SetBar(currentHealth);
+    }
+    void AlterMaxHealth(int alter)
+    {
+        maxHealth += alter;
+        hpbar.SetMaxBar(maxHealth);
     }
     void Pause()
     {
@@ -65,13 +85,13 @@ public class PlayerController2 : MonoBehaviour
         {
             InputActions.FindActionMap("Player").Disable();
             InputActions.FindActionMap("UI").Enable();
-            pauseWindow.SetActive(true);
+            Time.timeScale = 0;
         }
         if (pauseActionUI.WasPressedThisFrame())
         {
             InputActions.FindActionMap("UI").Disable();
             InputActions.FindActionMap("Player").Enable();
-            pauseWindow.SetActive(false);
+            Time.timeScale = 1;
         }
     }
     private IEnumerator Ghosting(float ghostcooldown)
