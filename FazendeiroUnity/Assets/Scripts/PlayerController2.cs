@@ -1,4 +1,3 @@
-using Microsoft.Unity.VisualStudio.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -65,7 +64,7 @@ public class PlayerController2 : MonoBehaviour
         {
             if (Damageable == true)
             {
-                PointsManager.instance.AlterPoints(-10);
+                PointsManager.instance.AlterPoints(-20);
                 ghostcoroutine = Ghosting(2.0f);
                 StartCoroutine(ghostcoroutine);
                 body.SetActive(false);
