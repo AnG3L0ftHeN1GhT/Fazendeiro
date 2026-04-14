@@ -12,7 +12,7 @@ public class DestroyOutOfBounds : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -25,18 +25,12 @@ public class DestroyOutOfBounds : MonoBehaviour
         if (transform.position.z < lowerBound)
         {
             Destroy(gameObject);
-            Exit();
+            LosePoints();
         }
     }
 
-    public void Exit()
+    public void LosePoints()
     {
-        Debug.Log("Game Over!");
-        /*
-#if UNITY_EDITOR
-        EditorApplication.ExitPlaymode();
-#else
-        Application.Quit(); // original code to quit Unity player
-#endif*/
+        PointsManager.instance.AlterPoints(-5);
     }
 }

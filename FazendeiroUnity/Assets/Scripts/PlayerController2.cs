@@ -14,7 +14,7 @@ public class PlayerController2 : MonoBehaviour
     private bool Damageable = true;
     public HealthBar hpbar;
     public float speed = 20f;
-    public float xRange = 15f;
+    public float xRange = 20f;
     public GameObject projectilePrefab;
     public GameObject pauseWindow;
     public GameObject body;
@@ -22,6 +22,7 @@ public class PlayerController2 : MonoBehaviour
     private InputAction moveAction;
     private InputAction fireAction;
     private InputAction ghostAction;
+    private InputAction healAction;
     private InputAction pauseActionPlayer;
     private InputAction pauseActionUI;
     private IEnumerator ghostcoroutine;
@@ -39,6 +40,7 @@ public class PlayerController2 : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
         fireAction = InputSystem.actions.FindAction("Jump");
         ghostAction = InputSystem.actions.FindAction("Ghost");
+        healAction = InputSystem.actions.FindAction("Heal");
         pauseActionPlayer = InputSystem.actions.FindAction("Pause/Player");
         pauseActionUI = InputSystem.actions.FindAction("Pause/UI");
     }
@@ -61,10 +63,27 @@ public class PlayerController2 : MonoBehaviour
         }
         if (ghostAction.WasPressedThisFrame())
         {
-            ghostcoroutine = Ghosting(2.0f);
-            StartCoroutine(ghostcoroutine);
-            body.SetActive(false);
-            Damageable = false;
+            if (Damageable == true)
+            {
+                PointsManager.instance.AlterPoints(-10);
+                ghostcoroutine = Ghosting(2.0f);
+                StartCoroutine(ghostcoroutine);
+                body.SetActive(false);
+                Damageable = false;
+            }
+        }
+        if (ghostAction.WasReleasedThisFrame())
+        {
+            body.SetActive(true);
+            Damageable = true;
+        }
+        if (healAction.WasPressedThisFrame())
+        {
+            if (PointsManager.score >= 100 && currentHealth < maxHealth)
+            {
+                PointsManager.instance.AlterPoints(-100);
+                AlterHealth(+1);
+            }
         }
     }
     private void OnTriggerEnter(Collider other)

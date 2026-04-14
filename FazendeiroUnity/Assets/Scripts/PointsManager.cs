@@ -5,7 +5,7 @@ public class PointsManager : MonoBehaviour
 {
     public static PointsManager instance;
     public TextMeshProUGUI pontos;
-    int score = 0;
+    public static int score = 0;
     void Start()
     {
         pontos.text = "Pontos: " + score.ToString();
