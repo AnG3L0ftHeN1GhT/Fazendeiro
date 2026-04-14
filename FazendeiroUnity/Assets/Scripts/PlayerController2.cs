@@ -4,11 +4,14 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class PlayerController2 : MonoBehaviour
 {
+    [SerializeField] private string gameover;
     private int maxHealth = 3;
     private int currentHealth = 3;
+    private bool Damageable = true;
     public HealthBar hpbar;
     public float speed = 20f;
     public float xRange = 15f;
@@ -22,6 +25,7 @@ public class PlayerController2 : MonoBehaviour
     private InputAction pauseActionPlayer;
     private InputAction pauseActionUI;
     private IEnumerator ghostcoroutine;
+    private BoxCollider boxcollider;
     private void OnEnable()
     {
         InputActions.FindActionMap("Player").Enable();
@@ -60,13 +64,19 @@ public class PlayerController2 : MonoBehaviour
             ghostcoroutine = Ghosting(2.0f);
             StartCoroutine(ghostcoroutine);
             body.SetActive(false);
+            Damageable = false;
         }
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Animal"))
+        if (other.CompareTag("Animal") && Damageable)
         {
             AlterHealth(-1);
+            if (currentHealth <= 0)
+            {
+                InputActions.FindActionMap("Player").Disable();
+                SceneManager.LoadScene(gameover);
+            }
         }
     }
     void AlterHealth(int alter)
@@ -86,17 +96,20 @@ public class PlayerController2 : MonoBehaviour
             InputActions.FindActionMap("Player").Disable();
             InputActions.FindActionMap("UI").Enable();
             Time.timeScale = 0;
+            pauseWindow.SetActive(true);
         }
         if (pauseActionUI.WasPressedThisFrame())
         {
             InputActions.FindActionMap("UI").Disable();
             InputActions.FindActionMap("Player").Enable();
             Time.timeScale = 1;
+            pauseWindow.SetActive(false);
         }
     }
     private IEnumerator Ghosting(float ghostcooldown)
     {
         yield return new WaitForSeconds(ghostcooldown);
         body.SetActive(true);
+        Damageable = true;
     }
 }

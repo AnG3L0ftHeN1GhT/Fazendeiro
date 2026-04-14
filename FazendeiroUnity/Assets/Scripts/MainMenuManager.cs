@@ -4,12 +4,17 @@ using UnityEngine.SceneManagement;
 public class MainMenuManager : MonoBehaviour
 {
     [SerializeField] private string start;
+    [SerializeField] private string menu;
     [SerializeField] private GameObject painelInicial;
     [SerializeField] private GameObject painelOpcoes;
     [SerializeField] private GameObject painelSaida;
     public void Play()
     {
         SceneManager.LoadScene(start);
+    }
+    public void Menu()
+    {
+        SceneManager.LoadScene(menu);
     }
     public void OpenOptions()
     {
